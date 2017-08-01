@@ -208,6 +208,12 @@ void handlePlay(MYSQL * con, MYSQL_RES * results, char * parameter1, char * para
 
 	MYSQL_ROW currentRow;
 
+	// Check for injections
+	if((strchr(parameter1,';')!=NULL) || (strchr(parameter1,';')!=NULL) ){
+		printf("Don't use semicolons\n");
+		return;
+	}
+
 	// This is how we play albums
 	if(strcmp(parameter1,"album")==0){
 		if(snprintf(sqlQuery,MAX_SIZE,"SELECT fileName, fileDirectory FROM files WHERE album='%s' ORDER BY trackNumber",parameter2)<0)
@@ -391,6 +397,12 @@ void loadDatabase(MYSQL * con, MYSQL_RES * results, char * location){
 				snprintf(mysqlQuery,4*MAX_SIZE,"INSERT INTO files VALUES ('%s','%s',%s,'%s','%s','%s')",songInfo[0],songInfo[1],songInfo[2],songInfo[3],location,fileName);
 
 				printf("\n\n");
+
+				// Check for injections
+				if(strchr(mysqlQuery,';')!=NULL){
+					printf("Don't use semicolons\n");
+					return;
+				}
 
 				// Add the file to the database
 				mysql_query(con,mysqlQuery);
