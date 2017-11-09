@@ -113,7 +113,7 @@ int main (int argc, char ** argv){
 		if(mysql_query(con,"CREATE DATABASE music")!=0) printf("Error creating database\n");
 		if(mysql_query(con,"use music")!=0) printf("Error creating database\n");
 		// Create the 'files' table
-		if(mysql_query(con,"CREATE TABLE `files` ( `artist` varchar(255) NOT NULL DEFAULT '', `album` varchar(255) NOT NULL DEFAULT '', `trackNumber` int(3) DEFAULT NULL, `songName` varchar(255) NOT NULL DEFAULT '', `fileDirectory` varchar(255) NOT NULL DEFAULT '', `fileName` varchar(255) NOT NULL DEFAULT '', PRIMARY KEY (fileName, fileDirectory));")!=0) printf("unable to create file table\n");
+		if(mysql_query(con,"CREATE TABLE `files` ( `artist` varchar(255) NOT NULL DEFAULT '', `album` varchar(255) NOT NULL DEFAULT '', `trackNumber` int(3) DEFAULT NULL, `songName` varchar(255) NOT NULL DEFAULT '', `fileDirectory` varchar(128) NOT NULL DEFAULT '', `fileName` varchar(128) NOT NULL DEFAULT '', PRIMARY KEY (fileName, fileDirectory));")!=0) printf("unable to create file table\n");
 
 	}
 
@@ -228,7 +228,6 @@ void handlePlay(MYSQL * con, MYSQL_RES * results, char * parameter1, char * para
 		if((currentRow=mysql_fetch_row(results))==NULL){
 			printf("Album not found in database\n\n");
 			free(sqlQuery);
-			for(;i<=0;i--) free(playArgs[i]);
 			return;
 		}
 		else{
@@ -260,7 +259,6 @@ void handlePlay(MYSQL * con, MYSQL_RES * results, char * parameter1, char * para
 		if((mysql_query(con,sqlQuery))!=0){
 			printf("Cannot find song\n");
 			free(sqlQuery);
-			for(;i<=0;i--) free(playArgs[i]);
 			return;
 		}
 		if((results=mysql_store_result(con))==NULL) printf("Error storing data\n");
@@ -271,7 +269,6 @@ void handlePlay(MYSQL * con, MYSQL_RES * results, char * parameter1, char * para
                 if((currentRow=mysql_fetch_row(results))==NULL){
                         printf("Song not found in database\n\n");
 			free(sqlQuery);
-			for(;i<=0;i--) free(playArgs[i]);
                         return;
                 }
                 else{
@@ -311,7 +308,6 @@ void handlePlay(MYSQL * con, MYSQL_RES * results, char * parameter1, char * para
                 if((currentRow=mysql_fetch_row(results))==NULL){
                         printf("Artist not found in database\n\n");
 			free(sqlQuery);
-			for(;i<=0;i--) free(playArgs[i]);
                         return;
                 }
                 else{
@@ -340,7 +336,6 @@ void handlePlay(MYSQL * con, MYSQL_RES * results, char * parameter1, char * para
 		}
 	}
 	free(sqlQuery);
-	for(;i<=0;i--) free(playArgs[i]);
 	return;
 }
 
@@ -368,10 +363,10 @@ void loadDatabase(MYSQL * con, MYSQL_RES * results, char * location){
 	// First we open the directory of the program
 	if(chdir(location)<0){
 		perror("Cannot find directory");
-		free(songInfo);
-		free(fileName);
-		free(fullFilePath);
-		free(mysqlQuery);
+//		free(songInfo);
+//		free(fileName);
+//		free(fullFilePath);
+//		free(mysqlQuery);
 		return;
 	}
 
@@ -409,10 +404,10 @@ void loadDatabase(MYSQL * con, MYSQL_RES * results, char * location){
 			}
 		}
 	}
-	free(songInfo);
-	free(fileName);
-	free(fullFilePath);
-	free(mysqlQuery);
+//	free(songInfo);
+//	free(fileName);
+//	free(fullFilePath);
+//	free(mysqlQuery);
 	return;
 }
 
