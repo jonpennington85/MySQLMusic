@@ -124,7 +124,8 @@ int main (int argc, char ** argv){
 
 	while(strcmp(option[0],"exit\n")!=0){
 
-		printf("Please type an option. Use the \"load\" option if new songs are added. Available options are: \n\nload\nplay song <song title>\nplay album <album title>\nplay artist <artist name>\nprint songs\ndelete database\n\nMy Option: ");
+		printf("Please type an option. Use the \"load\" option if new songs are added. Available options are: \n\n(1) load\n(2) play song <song title>\n(3) play album <album title>\n(4) play artist <artist name>\n(5) print songs\n(6) delete database\n(7) exit\n\nMy Option: ");
+//		printf("Please type an option. Use the \"load\" option if new songs are added. Available options are: \n\nload\nplay song <song title>\nplay album <album title>\nplay artist <artist name>\nprint songs\ndelete database\n\nMy Option: ");
 
 		// Reset the value of the input options
 		option[0]=originalopt[0];
@@ -150,9 +151,48 @@ int main (int argc, char ** argv){
 		// Now we have to handle each of the options, separately with a method for each
 		printf("\n");
 		// First we tokenize the command
-		option[0]=strtok_r(option[0]," ",&option[1]);
-		option[1]=strtok_r(option[1]," ",&option[2]);
-		option[2]=strtok(option[2],"\n");
+
+		switch(*option[0]){
+		case '1':
+			// Load
+			strcpy(option[0],"load\n");
+			break;
+		case '2':
+			// Play Song
+			option[2]=strtok_r(option[0]+2,"\n",&option[0]);
+			strcpy(option[0],"play");
+			strcpy(option[1],"song");
+			break;
+		case '3':
+			// Play Album
+			option[2]=strtok_r(option[0]+2,"\n",&option[0]);
+			strcpy(option[0],"play");
+			strcpy(option[1],"album");
+			break;
+		case '4':
+			// Play Artist
+			option[2]=strtok_r(option[0]+2,"\n",&option[0]);
+			strcpy(option[0],"play");
+			strcpy(option[1],"artist");
+			break;
+		case '5':
+			// Print Songs
+			strcpy(option[0],"print");
+			break;
+		case '6':
+			// Delete Database
+			strcpy(option[0],"delete");
+			break;
+		case '7':
+			// Exit
+			strcpy(option[0],"exit\n");
+			break;
+		default:
+			option[0]=strtok_r(option[0]," ",&option[1]);
+			option[1]=strtok_r(option[1]," ",&option[2]);
+			option[2]=strtok(option[2],"\n");
+			break;
+		}
 
 		// Then we check for the argument
 		if(strlen(option[0])==0) {	// To prevent segfault on empty entry
@@ -177,7 +217,7 @@ int main (int argc, char ** argv){
 			if(mysql_query(con,"CREATE DATABASE music")!=0) printf("Error creating database\n");
 			if(mysql_query(con,"use music")!=0) printf("Error creating database\n");
 			// Create the 'files' table
-			if(mysql_query(con,"CREATE TABLE `files` ( `artist` varchar(255) NOT NULL DEFAULT '', `album` varchar(255) NOT NULL DEFAULT '', `trackNumber` int(30) DEFAULT NULL, `songName` varchar(255) NOT NULL DEFAULT '', `fileDirectory` varchar(255) NOT NULL DEFAULT '', `fileName` varchar(255) NOT NULL DEFAULT '', PRIMARY KEY (fileName, fileDirectory));")!=0) printf("unable to create file table\n");
+			if(mysql_query(con,"CREATE TABLE `files` ( `artist` varchar(255) NOT NULL DEFAULT '', `album` varchar(255) NOT NULL DEFAULT '', `trackNumber` int(30) DEFAULT NULL, `songName` varchar(255) NOT NULL DEFAULT '', `fileDirectory` varchar(128) NOT NULL DEFAULT '', `fileName` varchar(128) NOT NULL DEFAULT '', PRIMARY KEY (fileName, fileDirectory));")!=0) printf("unable to create file table\n");
 			printf("\nDatabase emptied\n\n");
 		}
 	}
